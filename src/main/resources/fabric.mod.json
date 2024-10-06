@@ -5,7 +5,9 @@
 
   "name": "chyzyDevelopment",
   "description": "",
-  "authors": [],
+  "authors": [
+    "chyzman"
+  ],
   "contact": {},
 
   "license": "LGPL-3.0",
@@ -28,6 +30,6 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": ">=${minecraft_version}"
   }
 }
