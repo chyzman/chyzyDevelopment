@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "chyzydevelopment",
+  "version": "${version}",
+
+  "name": "chyzyDevelopment",
+  "description": "",
+  "authors": [],
+  "contact": {},
+
+  "license": "LGPL-3.0",
+  "icon": "assets/chyzydevelopment/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.chyzman.chyzydevelopment.client.ChyzydevelopmentClient"
+    ],
+    "main": [
+      "com.chyzman.chyzydevelopment.Chyzydevelopment"
+    ]
+  },
+
+  "mixins": [
+    "chyzydevelopment.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

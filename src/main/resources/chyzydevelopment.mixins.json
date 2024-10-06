@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.chyzman.chyzydevelopment.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "client": [
+    "client.CreateWorldScreenGameTabMixin",
+    "client.accessor.CreateWorldScreenAccessor",
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
