@@ -74,7 +74,7 @@ public class CreateWorldScreenGameTabMixin {
         creator.setGameRules(rules);
 
         creator.applyModifier((registryManager, registryHolder) -> {
-            var preset = registryManager.get(RegistryKeys.FLAT_LEVEL_GENERATOR_PRESET).get(shouldBeVoid ? THE_VOID : CHYZ_FLAT);
+            var preset = registryManager.getOrThrow(RegistryKeys.FLAT_LEVEL_GENERATOR_PRESET).get(shouldBeVoid ? THE_VOID : CHYZ_FLAT);
             if (preset == null) return registryHolder;
             return registryHolder.with(registryManager, new FlatChunkGenerator(preset.settings()));
         });
