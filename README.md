@@ -6,3 +6,4 @@ A development utility mod
 
 A simple mod that aids in development and testing of other mods. Currently, it:
 1. adds a button to quickly set up a test world to the world creation screen
+2. Makes command exceptions log errors if unhandled

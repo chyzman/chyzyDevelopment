@@ -4,6 +4,7 @@
   "package": "com.chyzman.chyzydevelopment.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "CommandManagerMixin"
   ],
   "client": [
     "client.CreateWorldScreenGameTabMixin",
