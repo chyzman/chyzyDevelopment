@@ -5,5 +5,5 @@ A development utility mod
 [![Badge linking to issues on github](https://img.shields.io/badge/dynamic/json?query=value&url=https%3A%2F%2Fimg.shields.io%2Fgithub%2Fissues-raw%2Fchyzman%2FchyzyDevelopment.json&label=&logo=github&color=2d2d2d&style=flat-square&labelColor=6e5494&logoColor=2d2d2d&suffix=%20issues)](https://github.com/chyzman/chyzyDevelopment/issues)
 
 A simple mod that aids in development and testing of other mods. Currently, it:
-1. adds a button to quickly set up a test world to the world creation screen
+1. Adds a button to quickly set up a test world to the world creation screen
 2. Makes command exceptions log errors if unhandled
