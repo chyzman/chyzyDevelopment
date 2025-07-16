@@ -1,4 +1,4 @@
-package com.chyzman.chyzydevelopment.mixin;
+package com.chyzman.chyzdev.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;

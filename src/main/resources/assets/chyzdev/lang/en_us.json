@@ -1,0 +1,14 @@
+{
+  "selectWorld.chyzdev.testing": "Testing",
+
+  "createWorld.chyzdev.testing": "Initialize Test World",
+  "createWorld.chyzdev.testing.void": "Initialize Void Test World",
+
+  "flat_world_preset.chyzdev.chyz": "Chyz Flat",
+
+  "commands.chyzdev.registry.notFound": "Unknown registry: %s",
+
+  "dump.chyzdev.registry.header": "Registry Dump (%s)",
+  "dump.chyzdev.lang.header": "Lang Dump",
+  "dump.chyzdev.namespace.header": "Namespace Dump"
+}

@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.chyzman.chyzdev.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CommandManagerMixin",
+    "CommandSuggestionsS2CPacketMixin",
+    "ServerCommandSourceMixin",
+    "SuggestionMixin",
+    "accessor.RegistryKeyArgumentTypeAccessor",
+    "accessor.SuggestionsBuilderAccessor"
+  ],
+  "client": [
+    "client.ClientCommandSourceMixin",
+    "client.CreateWorldScreenGameTabMixin",
+    "client.accessor.CreateWorldScreenAccessor",
+    "client.accessor.MinecraftClientAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

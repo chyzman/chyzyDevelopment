@@ -1,4 +1,4 @@
-package com.chyzman.chyzydevelopment.mixin.client.accessor;
+package com.chyzman.chyzdev.mixin.client.accessor;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
@@ -12,11 +12,11 @@ import java.nio.file.Path;
 @Mixin(CreateWorldScreen.class)
 public interface CreateWorldScreenAccessor {
     @Invoker("createLevelInfo")
-    LevelInfo chyzydevelopment$createLevelInfo(boolean debugWorld);
+    LevelInfo chyzdev$createLevelInfo(boolean debugWorld);
 
     @Accessor("dataPackTempDir")
-    Path chyzydevelopment$getDataPackTempDir();
+    Path chyzdev$getDataPackTempDir();
 
     @Accessor("parent")
-    Screen chyzydevelopment$getParent();
+    Screen chyzdev$getParent();
 }

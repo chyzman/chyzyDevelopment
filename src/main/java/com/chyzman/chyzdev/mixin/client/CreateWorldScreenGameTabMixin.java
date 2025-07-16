@@ -1,6 +1,6 @@
-package com.chyzman.chyzydevelopment.mixin.client;
+package com.chyzman.chyzdev.mixin.client;
 
-import com.chyzman.chyzydevelopment.mixin.client.accessor.CreateWorldScreenAccessor;
+import com.chyzman.chyzdev.mixin.client.accessor.CreateWorldScreenAccessor;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.chyzman.chyzydevelopment.client.ChyzydevelopmentClient.CHYZ_FLAT;
+import static com.chyzman.chyzdev.client.ChyzyDevelopmentClient.CHYZ_FLAT;
 import static net.minecraft.world.gen.FlatLevelGeneratorPresets.THE_VOID;
 
 @Mixin(CreateWorldScreen.GameTab.class)
@@ -35,10 +35,10 @@ public class CreateWorldScreenGameTabMixin {
         VOID_TESTING = false;
         adder.add(
                 ButtonWidget.builder(
-                                Text.translatable("createWorld.chyzydevelopment.testing" + (shouldBeVoid ? ".void" : "")),
+                                Text.translatable("createWorld.chyzdev.testing" + (shouldBeVoid ? ".void" : "")),
                                 button -> {
                                     setupTesting(worldScreen);
-//                                    button.setMessage(Text.translatable("createWorld.chyzydevelopment.testing" + (shouldBeVoid ? ".void" : "")));
+//                                    button.setMessage(Text.translatable("createWorld.chyzdev.testing" + (shouldBeVoid ? ".void" : "")));
                                 }
                         )
                         .width(210)
@@ -50,7 +50,7 @@ public class CreateWorldScreenGameTabMixin {
     private void setupTesting(CreateWorldScreen worldScreen) {
         var creator = worldScreen.getWorldCreator();
 
-        if (creator.getWorldName().equals(Text.translatable("selectWorld.newWorld").getString())) creator.setWorldName(Text.translatable("selectWorld.chyzdevelopment.testing").getString());
+        if (creator.getWorldName().equals(Text.translatable("selectWorld.newWorld").getString())) creator.setWorldName(Text.translatable("selectWorld.chyzdev.testing").getString());
 
         creator.setGameMode(WorldCreator.Mode.CREATIVE);
 
@@ -83,10 +83,10 @@ public class CreateWorldScreenGameTabMixin {
 
         var newScreen = CreateWorldScreen.create(
                 client,
-                ((CreateWorldScreenAccessor)worldScreen).chyzydevelopment$getParent(),
-                ((CreateWorldScreenAccessor)worldScreen).chyzydevelopment$createLevelInfo(false),
+                ((CreateWorldScreenAccessor)worldScreen).chyzdev$getParent(),
+                ((CreateWorldScreenAccessor)worldScreen).chyzdev$createLevelInfo(false),
                 creator.getGeneratorOptionsHolder(),
-                ((CreateWorldScreenAccessor)worldScreen).chyzydevelopment$getDataPackTempDir()
+                ((CreateWorldScreenAccessor)worldScreen).chyzdev$getDataPackTempDir()
         );
         newScreen.getWorldCreator().setSeed("");
 

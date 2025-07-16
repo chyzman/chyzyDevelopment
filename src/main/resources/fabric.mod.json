@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "chyzydevelopment",
+  "id": "chyzdev",
   "version": "${version}",
 
   "name": "chyzyDevelopment",
@@ -11,20 +11,20 @@
   "contact": {},
 
   "license": "LGPL-3.0",
-  "icon": "assets/chyzydevelopment/icon.png",
+  "icon": "assets/chyzdev/icon.png",
 
   "environment": "client",
   "entrypoints": {
     "client": [
-      "com.chyzman.chyzydevelopment.client.ChyzydevelopmentClient"
+      "com.chyzman.chyzdev.client.ChyzyDevelopmentClient"
     ],
     "main": [
-      "com.chyzman.chyzydevelopment.Chyzydevelopment"
+      "com.chyzman.chyzdev.ChyzyDevelopment"
     ]
   },
 
   "mixins": [
-    "chyzydevelopment.mixins.json"
+    "chyzdev.mixins.json"
   ],
 
   "depends": {
