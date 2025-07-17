@@ -1,4 +1,4 @@
-package com.chyzman.chyzdev.mixin;
+package com.chyzman.chyzdev.mixin.common;
 
 import com.chyzman.chyzdev.command.suggestion.AdvancedSuggestion;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

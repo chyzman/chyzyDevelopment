@@ -1,4 +1,4 @@
-package com.chyzman.chyzdev.mixin;
+package com.chyzman.chyzdev.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(CommandManager.class)
-public class CommandManagerMixin {
+public abstract class CommandManagerMixin {
 
     @ModifyExpressionValue(method = "execute", at = @At(value = "FIELD", target = "Lnet/minecraft/SharedConstants;isDevelopment:Z"))
     boolean enableCommandExceptions(boolean original) {

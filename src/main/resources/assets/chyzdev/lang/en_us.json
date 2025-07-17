@@ -10,5 +10,7 @@
 
   "dump.chyzdev.registry.header": "Registry Dump (%s)",
   "dump.chyzdev.lang.header": "Lang Dump",
-  "dump.chyzdev.namespace.header": "Namespace Dump"
+  "dump.chyzdev.namespace.header": "Namespace Dump",
+
+  "argument.chyzdev.registry.tooltip": "Registry: %s\nEntries: %s\nTags: %s"
 }

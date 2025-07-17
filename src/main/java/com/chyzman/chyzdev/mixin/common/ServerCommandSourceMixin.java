@@ -1,7 +1,6 @@
-package com.chyzman.chyzdev.mixin;
+package com.chyzman.chyzdev.mixin.common;
 
 import com.chyzman.chyzdev.pond.CommandSourceDuck;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;

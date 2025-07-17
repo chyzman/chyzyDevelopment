@@ -4,12 +4,16 @@
   "package": "com.chyzman.chyzdev.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "CommandManagerMixin",
-    "CommandSuggestionsS2CPacketMixin",
-    "ServerCommandSourceMixin",
-    "SuggestionMixin",
-    "accessor.RegistryKeyArgumentTypeAccessor",
-    "accessor.SuggestionsBuilderAccessor"
+    "common.CommandContextMixin",
+    "common.CommandManagerMixin",
+    "common.CommandSourceMixin",
+    "common.CommandSuggestionsS2CPacketMixin",
+    "common.ServerCommandSourceMixin",
+    "common.SuggestionMixin",
+    "common.accessor.CommandContextAccessor",
+    "common.accessor.CommandNodeAccessor",
+    "common.accessor.RegistryKeyArgumentTypeAccessor",
+    "common.accessor.SuggestionsBuilderAccessor"
   ],
   "client": [
     "client.ClientCommandSourceMixin",

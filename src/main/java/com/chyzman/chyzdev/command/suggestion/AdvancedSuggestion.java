@@ -162,7 +162,7 @@ public class AdvancedSuggestion extends Suggestion {
 
     }
 
-    public record encoder(
+    public record Encoder(
         String completion,
         String display,
         List<String> aliases
@@ -170,8 +170,8 @@ public class AdvancedSuggestion extends Suggestion {
         private static final Gson GSON = new Gson();
         private static final String PREFIX = "chyzdev$advanced_suggestion";
 
-        public static encoder from(AdvancedSuggestion suggestion) {
-            return new encoder(
+        public static Encoder from(AdvancedSuggestion suggestion) {
+            return new Encoder(
                 suggestion.getCompletion(),
                 suggestion.getText(),
                 suggestion.getAliases()
@@ -187,10 +187,10 @@ public class AdvancedSuggestion extends Suggestion {
         }
 
         @Nullable
-        public static AdvancedSuggestion.encoder fromJson(String json) {
+        public static AdvancedSuggestion.Encoder fromJson(String json) {
             json = json.substring(PREFIX.length());
             try {
-                return GSON.fromJson(json, encoder.class);
+                return GSON.fromJson(json, Encoder.class);
             } catch (JsonSyntaxException ignored) {
                 return null;
             }

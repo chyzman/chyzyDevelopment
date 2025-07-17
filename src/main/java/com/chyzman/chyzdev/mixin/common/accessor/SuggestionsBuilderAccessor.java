@@ -1,4 +1,4 @@
-package com.chyzman.chyzdev.mixin.accessor;
+package com.chyzman.chyzdev.mixin.common.accessor;
 
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;

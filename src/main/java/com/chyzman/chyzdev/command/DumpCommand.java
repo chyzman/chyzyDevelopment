@@ -9,6 +9,7 @@ import com.chyzman.chyzdev.pond.CommandSourceDuck;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -20,13 +21,11 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.RegistryKeyArgumentType;
 import net.minecraft.registry.*;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class DumpCommand<C extends CommandSource> {
@@ -50,7 +49,7 @@ public class DumpCommand<C extends CommandSource> {
         return RequiredArgumentBuilder.argument(name, type);
     }
 
-    private <T> T getArgumentOr(CommandContext<T> context, String name, Class<T> type, T defaultValue) {
+    private <T> T getArgumentOr(CommandContext<C> context, String name, Class<T> type, T defaultValue) {
         try {
             return context.getArgument(name, type);
         } catch (IllegalArgumentException e) {
@@ -82,37 +81,50 @@ public class DumpCommand<C extends CommandSource> {
 
     private LiteralArgumentBuilder<C> commonBranch() {
         return literal("dump")
-            .then(registryBranch())
-            .then(literal("lang")
-                      .executes(context -> dumpTranslations((CommandSourceDuck) context.getSource(), true, true))
-                      .then(literal("used").executes(context -> dumpTranslations((CommandSourceDuck) context.getSource(), true, false)))
-                      .then(literal("unused").executes(context -> dumpTranslations((CommandSourceDuck) context.getSource(), false, true)))
-            )
-            .then(literal("namespace")
-                      .executes(context -> dumpNamespaces(
-                          (CommandSourceDuck) context.getSource(),
-                          ((CommandSourceDuck) context.getSource()).chyzdev$getResourceManager().getAllNamespaces()
-                      ))
-            )
-            .then(literal("system-details")
-                      .executes(context -> {
-                          var source = (CommandSourceDuck) context.getSource();
-                          var details = source.chyzdev$getSystemDetails();
-                          var builder = new DumpBuilder()
-                              .header(Text.translatable("dump.chyzdev.system_details.header"));
-                          builder
-                              .writeLn(details.collect())
-                              .separator()
-                              .sendAsFeedback(source);
-                          return 1;
-                      })
-            );
+            .then(registryBranch());
+//            .then(literal("lang")
+//                      .executes(context -> dumpTranslations(context.getSource(), true, true))
+//                      .then(literal("used").executes(context -> dumpTranslations(context.getSource(), true, false)))
+//                      .then(literal("unused").executes(context -> dumpTranslations(context.getSource(), false, true)))
+//            )
+//            .then(literal("namespace")
+//                      .executes(context -> dumpNamespaces(
+//                          context.getSource(),
+//                          context.getSource().chyzdev$getResourceManager().getAllNamespaces()
+//                      ))
+//            )
+//            .then(literal("system-details")
+//                      .executes(context -> {
+//                          var source = (CommandSourceDuck) context.getSource();
+//                          var details = source.chyzdev$getSystemDetails();
+//                          var builder = new DumpBuilder()
+//                              .header(Text.translatable("dump.chyzdev.system_details.header"));
+//                          builder
+//                              .writeLn(details.collect())
+//                              .separator()
+//                              .sendAsFeedback(source);
+//                          return 1;
+//                      })
+//            );
     }
 
     //region REGISTRY
 
+    private interface FilterBranch<C extends CommandSource> {
+        ArgumentBuilder<C, ?> build(DumpCommand<C> commandInstance);
+
+        Predicate<RegistryEntry.Reference<?>> getPredicate(CommandContext<C> context);
+
+        default CommandContext<C> applyPredicate(CommandContext<C> context) {
+            context.getSource()
+                .chyzdev$addPredicate(RegistryEntry.Reference.class, getPredicate(context)::test)
+                .chyzdev$tryPackArgument("registry", RegistryKey.class, context);
+            return context;
+        }
+    }
+
     private LiteralArgumentBuilder<C> registryBranch() {
-        var registryNode = argument("registry", RegistryKeyArgumentType.registryKey(RegistriesAccessor.getROOT().getKey()))
+        var baseNode = argument("registry", RegistryKeyArgumentType.registryKey(RegistriesAccessor.getROOT().getKey()))
             .suggests((context, builder) -> CommandSourceExtension.suggest(
                 registryAccess.streamAllRegistryKeys(),
                 builder,
@@ -120,56 +132,101 @@ public class DumpCommand<C extends CommandSource> {
                     .alias(registryKey.getValue().getPath())
                     .display(completion -> completion + " (" + registryAccess.getWrapperOrThrow(registryKey).streamKeys().count() + ")")
             ))
-            .executes(context -> {
-                ((CommandSourceDuck) context.getSource()).chyzdev$sendFeedback(Text.literal(getRegistry(context).toString()));
-                return 1;
-            }).build();
+            .executes(this::dumpRegistry)
+            .build();
 
-        registryNode.addChild(
-            literal("namespace")
-                .then(argument("namespace", StringArgumentType.word())
-                          .suggests((context, builder) -> CommandSourceExtension.suggest(
-                              getRegistry(context).streamKeys().collect(Collectors.groupingBy(key -> key.getValue().getNamespace())).entrySet().stream(),
-                              builder,
-                              entry -> AdvancedSuggestion.builder(entry.getKey())
-                                  .display(completion -> completion + " (" + entry.getValue().size() + ")")
-                          ))
-                          .redirect(registryNode)
-                ).build()
+        Map<String, FilterBranch<C>> branches = new HashMap<>();
+
+        branches.put(
+            "namespace",
+            new FilterBranch<>() {
+                @Override
+                public ArgumentBuilder<C, ?> build(DumpCommand<C> commandInstance) {
+                    return commandInstance.argument("namespace", StringArgumentType.word())
+                        .suggests((context, builder) -> CommandSourceExtension.suggest(
+                            registryAccess.getWrapperOrThrow(getRegistry(context).getRegistryKey()).streamEntries().filter(context.getSource().chyzdev$getPredicate(RegistryEntry.Reference.class)).collect(Collectors.groupingBy(key -> key.registryKey().getValue().getNamespace())).entrySet().stream(),
+                            builder,
+                            entry -> AdvancedSuggestion.builder(entry.getKey())
+                                .display(completion -> completion + " (" + entry.getValue().size() + ")")
+                        ));
+                }
+
+                @Override
+                public Predicate<RegistryEntry.Reference<?>> getPredicate(CommandContext<C> context) {
+                    return entry -> entry.registryKey().getValue().getNamespace().equals(context.getArgument("namespace", String.class));
+                }
+            }
         );
 
-        registryNode.addChild(
-            literal("filter")
-                .then(
-                    argument("filter", new DynamicRegistryEntryPredicateArgumentType())
-                        .suggests((context, builder) -> DynamicRegistryEntryPredicateArgumentType.listSuggestions(context, builder, getRegistry(context)))
-                        .redirect(registryNode)
-                ).build()
+        branches.put(
+            "filter",
+            new FilterBranch<>() {
+                @Override
+                public ArgumentBuilder<C, ?> build(DumpCommand<C> commandInstance) {
+                    return commandInstance.argument("filter", new DynamicRegistryEntryPredicateArgumentType())
+                        .suggests((context, builder) -> {
+                            var registry = getRegistry(context);
+                            var filteredEntries = registryAccess
+                                .getWrapperOrThrow(registry.getRegistryKey())
+                                .streamEntries()
+                                .filter(context.getSource().chyzdev$getPredicate(RegistryEntry.Reference.class))
+                                .toList();
+                            var filteredTags = filteredEntries.stream().flatMap(RegistryEntry.Reference::streamTags).distinct().toList();
+                            CommandSourceExtension.suggest(filteredTags, builder, tagKey ->
+                                AdvancedSuggestion.builder("#" + tagKey.id().toString())
+                                    .alias(tagKey.id().getPath())
+                                    .display(completion -> completion + " (" + registry.getOrThrow(tagKey).stream().count() + ")")
+                            );
+                            return CommandSource.suggestIdentifiers(filteredEntries.stream().map(ref -> ref.registryKey().getValue()), builder);
+                        });
+                }
+
+                @Override
+                public Predicate<RegistryEntry.Reference<?>> getPredicate(CommandContext<C> context) {
+                    return DynamicRegistryEntryPredicateArgumentType.getPredicate(context, "filter");
+                }
+            }
         );
 
-        return literal("registry").then(registryNode);
+        for (var entry : branches.entrySet()) {
+            var branch = entry.getValue();
+            var builder = branch.build(this);
+            builder
+                .executes(context -> dumpRegistry(branch.applyPredicate(context)))
+                .redirect(baseNode, context -> branch.applyPredicate(context).getSource());
+            var built = literal(entry.getKey()).then(builder).build();
+            baseNode.addChild(built);
+        }
+
+        return literal("registry").then(baseNode);
     }
 
     private RegistryWrapper.Impl<C> getRegistry(CommandContext<C> context) {
         return registryAccess.getWrapperOrThrow((RegistryKey<MutableRegistry<C>>) context.getArgument("registry", RegistryKey.class));
     }
 
-    public <T> int dumpRegistryInfo(
-        CommandSourceDuck source,
-        Registry<T> registry,
-        @Nullable String namespace,
-        @Nullable TagKey<T> tagKey
-    ) {
-        var builder = new DumpBuilder()
-            .header(Text.translatable("dump.chyzdev.registry.header", registry.getKey().getValue().toString()));
-        registry.getIds().stream()
-            .collect(Collectors.groupingBy(Identifier::getNamespace))
-            .entrySet().stream()
-            .sorted(Comparator.comparingInt(entry -> entry.getValue().size()))
-            .forEach(entry -> builder.writeList(Text.literal(entry.getKey()), entry.getValue()));
+    public int dumpRegistry(CommandContext<C> context) {
+        var registry = getRegistry(context);
+        var source = context.getSource();
+
+        var builder = new DumpBuilder();
+//            .header(Text.translatable("dump.chyzdev.registry.header", registryKey.getValue().toString()));
+
+        var list = registry
+            .streamEntries()
+            .filter(source.chyzdev$getPredicate(RegistryEntry.Reference.class))
+            .map(ref -> ref.registryKey().getValue())
+            .toList();
+
+        builder.writeList(Text.translatable("dump.chyzdev.registry.header", registry.getRegistryKey().getValue().toString()), list);
+
+//            .sorted(Comparator.comparingInt(entry -> entry..size()))
+//            .forEach(entry -> builder.writeList(Text.literal(entry.registryKey().getValue().toString()), entry.));
         builder
             .separator()
             .sendAsFeedback(source);
+
+        source.chyzdev$clearPredicates();
         return 1;
     }
 

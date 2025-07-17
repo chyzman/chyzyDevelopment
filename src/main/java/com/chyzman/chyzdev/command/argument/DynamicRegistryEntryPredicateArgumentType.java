@@ -2,7 +2,6 @@ package com.chyzman.chyzdev.command.argument;
 
 import com.chyzman.chyzdev.command.suggestion.AdvancedSuggestion;
 import com.chyzman.chyzdev.command.suggestion.CommandSourceExtension;
-import com.chyzman.chyzdev.pond.CommandSourceDuck;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -13,16 +12,12 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 public class DynamicRegistryEntryPredicateArgumentType implements ArgumentType<Predicate<RegistryEntry<?>>> {
@@ -31,7 +26,7 @@ public class DynamicRegistryEntryPredicateArgumentType implements ArgumentType<P
     public DynamicRegistryEntryPredicateArgumentType() {}
 
     @SuppressWarnings("unchecked")
-    public Predicate<RegistryEntry<?>> getPredicate(CommandContext<?> context, String name) throws CommandSyntaxException {
+    public static Predicate<RegistryEntry.Reference<?>> getPredicate(CommandContext<?> context, String name) {
         return context.getArgument(name, Predicate.class);
     }
 
@@ -53,7 +48,7 @@ public class DynamicRegistryEntryPredicateArgumentType implements ArgumentType<P
         }
     }
 
-    public static <T> CompletableFuture<Suggestions> listSuggestions(CommandContext<T> context, SuggestionsBuilder builder, RegistryWrapper.Impl<T> registry) {
+    public static <T> CompletableFuture<Suggestions> listSuggestions(SuggestionsBuilder builder, RegistryWrapper.Impl<T> registry) {
         CommandSourceExtension.suggest(registry.streamTagKeys(), builder, tagKey ->
             AdvancedSuggestion.builder("#" + tagKey.id().toString())
                 .alias(tagKey.id().getPath())
@@ -65,11 +60,5 @@ public class DynamicRegistryEntryPredicateArgumentType implements ArgumentType<P
     @Override
     public Collection<String> getExamples() {
         return EXAMPLES;
-    }
-
-    @FunctionalInterface
-    public interface RegistryRefProvider extends BiFunction<CommandContext<?>, CommandRegistryAccess, RegistryKey<Registry<?>>> {
-        @Override
-        RegistryKey<Registry<?>> apply(CommandContext<?> context, CommandRegistryAccess registryAccess);
     }
 }

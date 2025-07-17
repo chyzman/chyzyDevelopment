@@ -21,7 +21,7 @@ import static com.chyzman.chyzdev.client.ChyzyDevelopmentClient.CHYZ_FLAT;
 import static net.minecraft.world.gen.FlatLevelGeneratorPresets.THE_VOID;
 
 @Mixin(CreateWorldScreen.GameTab.class)
-public class CreateWorldScreenGameTabMixin {
+public abstract class CreateWorldScreenGameTabMixin {
     @Unique private static boolean VOID_TESTING = false;
     @Unique private boolean shouldBeVoid = false;
 

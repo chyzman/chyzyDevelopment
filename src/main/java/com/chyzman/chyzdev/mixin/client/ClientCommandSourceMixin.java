@@ -10,7 +10,7 @@ import net.minecraft.util.SystemDetails;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ClientCommandSource.class)
-public class ClientCommandSourceMixin implements CommandSourceDuck {
+public abstract class ClientCommandSourceMixin implements CommandSourceDuck {
     @Override
     public void chyzdev$sendFeedback(Text message) {
         var player = MinecraftClient.getInstance().player;

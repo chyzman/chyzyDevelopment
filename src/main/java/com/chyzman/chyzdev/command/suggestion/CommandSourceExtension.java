@@ -1,6 +1,6 @@
 package com.chyzman.chyzdev.command.suggestion;
 
-import com.chyzman.chyzdev.mixin.accessor.SuggestionsBuilderAccessor;
+import com.chyzman.chyzdev.mixin.common.accessor.SuggestionsBuilderAccessor;
 import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
