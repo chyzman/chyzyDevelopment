@@ -1,7 +1,7 @@
 package com.chyzman.chyzdev;
 
 import com.chyzman.chyzdev.command.DumpCommand;
-import com.chyzman.chyzdev.command.argument.DynamicRegistryEntryPredicateArgumentType;
+import com.chyzman.chyzdev.command.argument.RegistryEntriesArgumentType;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
@@ -17,9 +17,9 @@ public class ChyzyDevelopment implements ModInitializer {
     @Override
     public void onInitialize() {
         ArgumentTypeRegistry.registerArgumentType(
-            id("registry_entry_predicate"),
-            DynamicRegistryEntryPredicateArgumentType.class,
-            ConstantArgumentSerializer.of(DynamicRegistryEntryPredicateArgumentType::new)
+            id("registry_entries_selector"),
+            RegistryEntriesArgumentType.class,
+            ConstantArgumentSerializer.of(RegistryEntriesArgumentType::new)
         );
 
         DumpCommand.registerServer();

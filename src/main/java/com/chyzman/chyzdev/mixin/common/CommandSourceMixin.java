@@ -12,33 +12,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.Inject;
 
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
 @Mixin({ClientCommandSource.class, ServerCommandSource.class})
 public abstract class CommandSourceMixin implements CommandSourceDuck {
-    @Unique private final Map<Class<?>, Predicate<Object>> PREDICATE_MAP = new HashMap<>();
+    @Unique private final Map<Class<?>, Deque<Predicate<?>>> PREDICATE_STACKS = new HashMap<>();
     @Unique private final Map<String, ParsedArgument<?, ?>> PACKED_ARGS = new HashMap<>();
 
     @Override
-    public <T, S extends CommandSource> S chyzdev$addPredicate(Class<T> type, Predicate<T> predicate) {
-        PREDICATE_MAP.merge(
-            type,
-            (Predicate<Object>) predicate,
-            Predicate::and
-        );
-        return (S) this;
-    }
-
-    @Override
-    public <T> Predicate<T> chyzdev$getPredicate(Class<T> type) {
-        return (Predicate<T>) PREDICATE_MAP.getOrDefault(type, o -> true);
-    }
-
-    @Override
-    public void chyzdev$clearPredicates() {
-        PREDICATE_MAP.clear();
+    public Map<Class<?>, Deque<Predicate<?>>> chyzdev$getPredicateStacks() {
+        return PREDICATE_STACKS;
     }
 
     @Override

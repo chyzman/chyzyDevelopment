@@ -12,5 +12,15 @@
   "dump.chyzdev.lang.header": "Lang Dump",
   "dump.chyzdev.namespace.header": "Namespace Dump",
 
-  "argument.chyzdev.registry.tooltip": "Registry: %s\nEntries: %s\nTags: %s"
+  "argument.chyzdev.registryEntrySelector.registry.missing": "Missing registry identifier",
+  "argument.chyzdev.registryEntrySelector.registry.invalid": "Invalid registry identifier",
+
+  "argument.chyzdev.registryEntrySelector.option.missing": "Expected option, but found none",
+  "argument.chyzdev.registryEntrySelector.option.invalid": "Invalid or Unknown option type '%s'",
+  "argument.chyzdev.registryEntrySelector.option.repeat": "Option '%s' cannot be repeated",
+  "argument.chyzdev.registryEntrySelector.option.value": "Missing value for option '%s'",
+
+  "argument.chyzdev.registryEntrySelector.option.namespace.invalid": "Invalid or Unknown namespace '%s'",
+  "argument.chyzdev.registryEntrySelector.option.tag.tag.invalid": "Invalid or Unknown tag '%s'",
+  "argument.chyzdev.registryEntrySelector.option.exclude.entry.invalid": "Invalid or Unknown registry entry '%s'"
 }
